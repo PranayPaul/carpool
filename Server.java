@@ -185,7 +185,47 @@ public class Server {
 	public static Passenger bestPassenger(ArrayList <Passenger> plist, Driver d) {
 		Passenger p = new Passenger();
 		//selects the best passenger for driver d from plist
+		Passenger p = new Passenger();
+		ArrayList <Passenger> list = new ArrayList <Passenger>();
+		list = plist;
+		double dis = distortion( d , list.get(0) );
+		double backtrack = BacktrackCost( d , list.get(0));
+		double lcost = dis + backtrack;
+		p = list.get(0);
+		for( int i = 0 ; i < list.size() ; i++){
+		 dis = distortion( d , list.get(i) );
+		 backtrack = BacktrackCost( d , list.get(0));
+		 double cost = dis + backtrack;
+		 if( lcost < cost  ) {
+			 lcost = cost;
+			 p = list.get(i);
+		 }
+		}
 		return p;
 	}
+	public static double BacktrackCost( Driver d , Passenger p ){
+		 double globalx = d.p1.destX - d.p1.destX;
+		    double globaly = d.p1.destY - d.p1.destY;  //calculate the penalty cost if car has to backtrack
+		    double localx = p.oriX - d.x;
+		    double localy = p.oriY - d.y;
+		    double currentx = d.p1.destX - d.x;
+		    double currenty = d.p1.destY - d.y;
+		    double valuex , valuey;
+		    if( globalx * localx <= 0 ) {
+		    	valuex = Math.abs( localx );
+		    }
+		    else
+			valuex = 0;
+		    if( globaly * localy <= 0 ){
+			    valuey = Math.abs( localy );
+		    }
+		    else
+	               valuey = 0;
+		    double backtrack = valuex + valuey; //Number of bin the car needs to backtrack.
+		    double r1 = ( 1 + 0.25 );
+		    double r2 = 1 + (0.25 * manhattan( currentx , currenty ) < manhattan( globalx , globaly ) ? (1 - manhattan( currentx , currenty ) / manhattan( globalx , globaly )) : 0);
+		    return Math.pow( backtrack , (r1 * r2) );// backtracking cost which is increase exponentially
+		    }
+}    
 	
 }
